@@ -13,6 +13,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Custom Glow Colors */
+  --glow-primary: #06b6d4; /* Cyan */
+  --glow-secondary: #8b5cf6; /* Violet */
 }
 
 body {
@@ -21,9 +25,30 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  @apply bg-slate-950 text-white;
+  /* Deep Modern Technical Background */
+  background: radial-gradient(circle at 50% 0%, #172554, #0f172a, #020617); 
+  background-attachment: fixed;
+  color: white;
 }
 
 #root {
   width: 100%;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

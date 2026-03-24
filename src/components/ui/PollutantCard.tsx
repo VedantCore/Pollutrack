@@ -15,10 +15,17 @@ interface PollutantCardProps {
 }
 
 const statusColors = {
-  Good: 'text-green-400',
-  Moderate: 'text-yellow-400',
-  Unhealthy: 'text-orange-400',
-  Hazardous: 'text-red-400',
+  Good: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  Moderate: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+  Unhealthy: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
+  Hazardous: 'text-red-400 bg-red-500/10 border-red-500/20',
+};
+
+const iconColors = {
+    Good: 'text-emerald-400',
+    Moderate: 'text-yellow-400',
+    Unhealthy: 'text-orange-400',
+    Hazardous: 'text-red-400',
 };
 
 const PollutantCard: React.FC<PollutantCardProps> = ({
@@ -35,19 +42,19 @@ const PollutantCard: React.FC<PollutantCardProps> = ({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: delay }}
-      className={cn('flex flex-col items-center justify-center p-6 bg-slate-900/40 border-slate-700/50', className)}
+      className={cn('flex flex-col items-center justify-center p-6', className)}
     >
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-800/50 text-sky-400 shadow-inner">
-        <Icon size={24} />
+      <div className={cn("mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800/50 shadow-inner border border-white/5", iconColors[status])}>
+        <Icon size={28} />
       </div>
-      <h3 className="mb-1 text-sm font-medium text-slate-400 uppercase tracking-widest">{title}</h3>
-      <div className="flex items-baseline gap-1">
-        <span className={cn('text-3xl font-bold tracking-tight', statusColors[status])}>
+      <h3 className="mb-2 text-xs font-semibold text-slate-400 uppercase tracking-widest">{title}</h3>
+      <div className="flex items-baseline gap-1 mb-3">
+        <span className={cn('text-4xl font-bold tracking-tight text-white drop-shadow-lg')}>
           {value}
         </span>
-        <span className="text-xs font-semibold text-slate-500">{unit}</span>
+        <span className="text-sm font-medium text-slate-500">{unit}</span>
       </div>
-      <div className={cn('mt-2 text-xs font-medium px-2 py-0.5 rounded-full bg-slate-800/50 border border-slate-700/50', statusColors[status])}>
+      <div className={cn('px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border backdrop-blur-md', statusColors[status])}>
         {status}
       </div>
     </GlassCard>

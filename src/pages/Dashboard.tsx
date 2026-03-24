@@ -13,8 +13,8 @@ import {
   ThermometerSun, 
   CloudRain, 
   CloudFog,
-  Map as MapIcon,
-  LayoutDashboard,
+  // Map as MapIcon,
+  // LayoutDashboard,
   MapPin,
   RefreshCw,
   Loader2
@@ -161,17 +161,18 @@ const Dashboard: React.FC = () => {
         if (forecastData.list) {
             // Take first 24 hours (approx 24 items if hourly, or less)
             // OpenWeather forecast provides hourly? No, documentation says "hourly for 4 days"?
-            // Let's check the list.
+            /* 
              for (let i = 0; i < Math.min(6, forecastData.list.length); i++) {
                 const item = forecastData.list[i]; // Every item or skip? 
                 // Creating a simplified prediction graph
                 // Step every 4 hours?
              }
+             */
              
              // OpenWeather returns items with 'dt'.
              // Let's pick 4 points: 00:00, 06:00, 12:00, 18:00 of TOMORROW or Next 24h?
              // Prediction usually means next 24h.
-             const next24h = forecastData.list.slice(0, 8); // Access next ~8 hours or samples
+             // const next24h = forecastData.list.slice(0, 8); // Access next ~8 hours or samples
              // Actually let's map the next 4 intervals (6h gap)
              // Forecast step is usually 1 hour.
              

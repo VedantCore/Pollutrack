@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MapPin, Search, Loader2, Navigation } from 'lucide-react';
-import { cn } from '../lib/utils';
+// import { cn } from '../lib/utils';
 import GlassCard from './ui/GlassCard';
 
 import { weatherService } from '../services/weatherService';
