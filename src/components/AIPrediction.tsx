@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   XAxis,
   YAxis,
@@ -11,40 +11,68 @@ import {
 } from 'recharts';
 import GlassCard from './ui/GlassCard';
 import { Brain, TrendingUp } from 'lucide-react';
-
-interface PredictionData {
-  time: string;
-  actual: number | null;
-  predicted: number;
-}
+import type { AIPredictionPeriods } from '../pages/Dashboard';
 
 interface AIPredictionProps {
-  data: PredictionData[];
+  data: AIPredictionPeriods;
 }
 
 const AIPrediction: React.FC<AIPredictionProps> = ({ data }) => {
+  const [timeframe, setTimeframe] = useState<'threeDays' | 'oneWeek' | 'oneMonth'>('threeDays');
+
+  const chartData = data[timeframe] || [];
+  
+  const accuracyMap = {
+      threeDays: '89%',
+      oneWeek: '74%',
+      oneMonth: '42%'
+  };
   return (
     <GlassCard className="col-span-1 lg:col-span-2 row-span-2 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-5">
             <Brain className="w-32 h-32" />
         </div>
-      <div className="mb-6 flex items-center justify-between z-10 relative">
+      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between z-10 relative gap-4">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-indigo-500/20 rounded-lg">
             <Brain className="h-6 w-6 text-indigo-400" />
           </div>
           <h2 className="text-xl font-bold text-white">AI Prediction Module</h2>
         </div>
-        <div className="flex items-center gap-2 text-sm text-slate-400">
-             <TrendingUp className="h-4 w-4 text-green-400" />
-             <span>89% Accuracy</span>
+        
+        <div className="flex items-center gap-4">
+            <div className="bg-slate-800/80 rounded-lg p-1 border border-white/5 flex gap-1 text-sm font-medium">
+                <button 
+                  onClick={() => setTimeframe('threeDays')}
+                  className={`px-3 py-1.5 rounded-md transition-all ${timeframe === 'threeDays' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  3 Days
+                </button>
+                <button 
+                  onClick={() => setTimeframe('oneWeek')}
+                  className={`px-3 py-1.5 rounded-md transition-all ${timeframe === 'oneWeek' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  1 Week
+                </button>
+                <button 
+                  onClick={() => setTimeframe('oneMonth')}
+                  className={`px-3 py-1.5 rounded-md transition-all ${timeframe === 'oneMonth' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  1 Month
+                </button>
+            </div>
+            
+            <div className="flex items-center justify-center gap-2 text-sm text-slate-400 bg-slate-900/50 px-3 py-2 rounded-xl backdrop-blur-sm border border-slate-800/80 shadow-inner">
+                <TrendingUp className={`h-4 w-4 ${timeframe === 'oneMonth' ? 'text-orange-400' : 'text-green-400'}`} />
+                <span>{accuracyMap[timeframe]} Accuracy</span>
+            </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[250px] lg:h-[300px]">
         <div className="lg:col-span-2 h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                 <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#818cf8" stopOpacity={0.8}/>
@@ -72,7 +100,7 @@ const AIPrediction: React.FC<AIPredictionProps> = ({ data }) => {
         <div className="flex flex-col justify-center space-y-4 z-10">
             <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700">
                 <h4 className="text-sm font-semibold text-slate-400 mb-1">Insight</h4>
-                <p className="text-sm text-white">Pollution levels are expected to <span className="text-red-400 font-bold">fluctuate</span> in the next 24 hours based on forecast models.</p>
+                <p className="text-sm text-white">Pollution levels are expected to <span className="text-red-400 font-bold">fluctuate</span> over the <span className="text-indigo-400 font-bold">{timeframe === 'threeDays' ? 'next 3 days' : timeframe === 'oneWeek' ? 'next week' : 'next month'}</span> based on forecast models.</p>
             </div>
             <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700">
                 <h4 className="text-sm font-semibold text-slate-400 mb-1">Recommendation</h4>

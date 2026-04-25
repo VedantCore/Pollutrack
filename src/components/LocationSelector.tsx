@@ -26,12 +26,30 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // Simulate API delay for better UX
-        setTimeout(() => {
-          onLocationSelect("Current Location", [position.coords.latitude, position.coords.longitude]);
-          setIsLoading(false);
-        }, 1500);
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        try {
+          // Use reverse geocoding with OpenStreetMap Nominatim API for precise location names
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            // Try to get the most specific location name available
+            const city = data.address?.village || data.address?.town || data.address?.city || data.address?.county || "Current Location";
+            const state = data.address?.state || "";
+            const country = data.address?.country || "";
+            const locationName = [city, state, country].filter(Boolean).join(", ");
+            onLocationSelect(locationName, [lat, lon]);
+          } else {
+            onLocationSelect("Current Location", [lat, lon]);
+          }
+        } catch (err) {
+          console.error("Reverse geocoding failed:", err);
+          onLocationSelect("Current Location", [lat, lon]);
+        }
+        setIsLoading(false);
       },
       (err) => {
         console.error(err);
@@ -51,10 +69,11 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
     try {
       const results = await weatherService.searchCity(searchQuery);
       
-      if (results.length > 0) {
+      if (results && results.length > 0) {
         // Use the first result
         const city = results[0];
-        onLocationSelect(city.name, [city.lat, city.lon]);
+        const locationName = [city.name, city.state, city.country].filter(Boolean).join(", ");
+        onLocationSelect(locationName, [city.lat, city.lon]);
       } else {
         // Fallback for demo/no-key scenario
         console.warn("No results found or API key missing. Falling back to mock coordinates.");
@@ -66,10 +85,16 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
     } catch (err) {
       console.error("Search failed:", err);
       // Fallback
-      onLocationSelect(searchQuery); 
+      onLocationSelect(searchQuery, [18.5204, 73.8567]); 
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePresetSelect = (cityName: string) => {
+    setSearchQuery(cityName);
+    // Fake event object to satisfy handleSearch
+    handleSearch({ preventDefault: () => {} } as React.FormEvent);
   };
 
   return (
@@ -128,10 +153,38 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
             <button 
                 type="submit"
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                disabled={isLoading}
             >
                 <Search className="w-4 h-4" />
             </button>
           </form>
+
+          <div className="pt-2 text-left">
+            <p className="text-xs text-slate-400 mb-3 px-1 uppercase tracking-wider font-semibold">Test Different Scenarios</p>
+            <div className="flex flex-wrap gap-2">
+              <button 
+                onClick={() => handlePresetSelect('Reykjavik')}
+                disabled={isLoading}
+                className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
+              >
+                Reykjavík (Low AQI)
+              </button>
+              <button 
+                onClick={() => handlePresetSelect('Loni Kalbhor')}
+                disabled={isLoading}
+                className="px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-medium hover:bg-orange-500/20 transition-colors"
+              >
+                Loni Kalbhor (Avg AQI)
+              </button>
+              <button 
+                onClick={() => handlePresetSelect('New Delhi')}
+                disabled={isLoading}
+                className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-medium hover:bg-red-500/20 transition-colors"
+              >
+                New Delhi (High AQI)
+              </button>
+            </div>
+          </div>
 
           {error && (
             <motion.p 

@@ -26,7 +26,7 @@ const LandingPage: React.FC = () => {
                     <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Pollutrack.AI</span>
                 </div>
                 <div className="flex gap-6 items-center">
-                   <button className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Documentation</button>
+                   <button onClick={() => navigate('/documentation')} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Documentation</button>
                    <button className="text-sm font-medium px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-sm transition-all text-white">Login</button>
                 </div>
             </nav>
@@ -74,7 +74,7 @@ const LandingPage: React.FC = () => {
                     className="flex flex-col sm:flex-row gap-5"
                 >
                     <button 
-                        onClick={() => navigate('/dashboard')}
+                        onClick={() => navigate('/dashboard', { state: { showCitySelector: true } })}
                         className="group relative px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-500/20 hover:shadow-cyan-500/30 flex items-center gap-3 overflow-hidden"
                     >
                         <span className="relative z-10">Launch Dashboard</span>
